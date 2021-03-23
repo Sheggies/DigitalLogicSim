@@ -21,12 +21,10 @@ end
     @raise Raises an error when a key is already in use
 ]]
 function Dictionary:add(key, value)
-    if self:containsKey(key) then
-        error("Key is already in use.")
-    else
-        self.array[key] = value
-        self.length = self.length + 1
-    end
+    assert(not self:containsKey(key), "Key is already in use.")
+
+    self.array[key] = value
+    self.length = self.length + 1
 end
 
 --[[--
@@ -54,11 +52,9 @@ end
     @raise Raises an error if there is no entry with the specified key
 ]]
 function Dictionary:get(key)
-    if self:containsKey(key) then
-        return self.array[key]
-    else
-        error("Key not found.")
-    end
+    assert(self:containsKey(key), "Key not found.")
+
+    return self.array[key]
 end
 
 --[[--
@@ -77,11 +73,9 @@ end
     @raise Raises an error if there is no entry with the specified key
 ]]
 function Dictionary:update(key, value)
-    if self:containsKey(key) then
-        self.array[key] = value
-    else
-        error("Key not found.")
-    end
+    assert(self:containsKey(key), "Key not found.")
+
+    self.array[key] = value
 end
 
 --[[--
@@ -157,9 +151,7 @@ end
     @return Returns true if there is an entry for the specified key otherwise false
 ]]
 function Dictionary:containsKey(key)
-    if key == nil then
-        error("Key can't be nil.")
-    end
+    assert(key ~= nil, "Key can't be nil.")
 
     return self.array[key] ~= nil
 end
@@ -174,6 +166,7 @@ function Dictionary:containsValue(value)
 
     for k, v in self:getIterator() do
         contains = v == value
+
         if contains then
             break
         end

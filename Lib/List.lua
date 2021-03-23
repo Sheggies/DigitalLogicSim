@@ -59,15 +59,10 @@ end
     @param object The new value for the given index
 ]]
 function List:update(i, object)
-    if i > 0 and i <= self:getLength() then
-        if object ~= nil then
-            self.array[i] = object
-        else
-            error("Value can't be nil.")
-        end
-    else
-        error("Index out of bounds.")
-    end
+    assert(i > 0 and i <= self:getLength(), "Index out of bounds.")
+    assert(object ~= nil, "Value can't be nil.")
+
+    self.array[i] = object
 end
 
 --[[--
@@ -104,13 +99,11 @@ end
     @param i The position of the object to be removed
     @raise Raises an error if the index is out of bounds
 ]]
-function List:removeAt(index)
-    if index > 0 and index <= self:getLength() then
-        table.remove(self.array, index)
-        self.length = self.length - 1
-    else
-        error("Index out of bounds")
-    end
+function List:removeAt(i)
+    assert(i > 0 and i <= self:getLength(), "Index out of bounds.")
+
+    table.remove(self.array, i)
+    self.length = self.length - 1
 end
 
 --[[--
@@ -120,20 +113,19 @@ end
     @raise Raises an error if no matching expression has been passed
 ]]
 function List:removeAll(match)
-    if match == nil then
-        error("Match can't be nil.")
-    else
-        local removedItems = 0
+    assert(match ~= nil, "Match can't be nil.")
+    assert(type(match) == "function", "Argument of type function expected.")
 
-        for i, v in self:getIterator() do
-            if match(i, v) then
-                self:removeAt(i)
-                removedItems = removedItems + 1
-            end
+    local removedItems = 0
+
+    for i, v in self:getIterator() do
+        if match(i, v) then
+            self:removeAt(i)
+            removedItems = removedItems + 1
         end
-
-        return removedItems
     end
+
+    return removedItems
 end
 
 --[[--
@@ -177,11 +169,9 @@ end
     @raise Raises an error if the index is out of bounds
 ]]
 function List:getAt(i)
-    if i > 0 and i <= self:getLength() then
-        return self.array[i]
-    else
-        error("Index out of range.")
-    end
+    assert(i > 0 and i <= self:getLength(), "Index out of range.")
+
+    return self.array[i]
 end
 
 --[[--
@@ -210,13 +200,8 @@ end
     @raise Raises an error of either the index or the count of elements are out of range
 ]]
 function List:getRange(index, count)
-    if index < 1 or index > self:getLength() then
-        error("Index out of range.")
-    end
-
-    if count < 0 and index + count > self:getLength() then
-        error("Index out of range.")
-    end
+    assert(index > 0 and index <= self:getLength(), "Index out of range.")
+    assert(count >= 0 and index + count <= self:getLength(), "Index out of range.")
 
     local list = List()
 
@@ -296,23 +281,22 @@ end
     @raise Raises an error when no match expression has been passed
 ]]
 local function find(self, match, returnOnFirstOccurrence)
-    if match == nil then
-        error("Match can't be nil.")
-    else
-        local result = List()
+    assert(match ~= nil, "Match can't be nil.")
+    assert(type(match) == "function", "Argument of type function expected.")
 
-        for _, v in self:getIterator() do
-            if match(_, v) then
-                result:add(v)
+    local result = List()
 
-                if returnOnFirstOccurrence then
-                    break
-                end
+    for _, v in self:getIterator() do
+        if match(_, v) then
+            result:add(v)
+
+            if returnOnFirstOccurrence then
+                break
             end
         end
-
-        return result
     end
+
+    return result
 end
 
 --[[--
@@ -352,23 +336,22 @@ end
     @raise Raises an error when no match expression has been passed
 ]]
 local function findIndexInRange(self, startIndex, endIndex, match, returnOnFirstOccurrence)
-    if match == nil then
-        error("Match can't be nil.")
-    else
-        local index = -1
+    assert(match ~= nil, "Match can't be nil.")
+    assert(type(match) == "function", "Argument of type function expected.")
 
-        for i = startIndex, endIndex, 1 do
-            if match(i, self:getAt(i)) then
-                index = self:indexOf(self:getAt(i))
+    local index = -1
 
-                if returnOnFirstOccurrence then
-                    break
-                end
+    for i = startIndex, endIndex, 1 do
+        if match(i, self:getAt(i)) then
+            index = self:indexOf(self:getAt(i))
+
+            if returnOnFirstOccurrence then
+                break
             end
         end
-
-        return index
     end
+
+    return index
 end
 
 --[[--
@@ -399,9 +382,7 @@ end
     @raise Raises an error when the index is out of bounds
 ]]
 function List:findIndexAfter(index, match)
-    if index < 1 or index > self:getLength() then
-        error("Index out of range.")
-    end
+    assert(index > 0 and index <= self:getLength(), "Index out of range.")
 
     return self:findIndexInRange(index, self:getLength(), match)
 end
@@ -415,9 +396,7 @@ end
     @raise Raises an error when the range is out of bounds
 ]]
 function List:findIndexInRange(index, endIndex, match)
-    if index < 1 or index > self:getLength() then
-        error("Index out of range.")
-    end
+    assert(index > 0 and index <= self:getLength(), "Index out of range.")
 
     return findIndexInRange(index, endIndex, match, true)
 end
