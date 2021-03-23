@@ -75,17 +75,7 @@ BooleanOperation = {
     end,
 
     [bOp.Negation] = function (input)
-        local output
-
-        if type(input) == "table" then
-            for _, edge in input:getIterator() do
-                output = edge:getSource():getOutput()
-            end
-        elseif type(input) == "boolean" then
-            output = input
-        end
-
-        return not output
+        return not BooleanOperation[bOp.Identity](input)
     end,
 
     [bOp.Feedback] = function (feedbackSource)
